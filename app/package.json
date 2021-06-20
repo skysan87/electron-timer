@@ -1,0 +1,31 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main/main.js",
+  "scripts": {
+    "dev": "MODE=dev electron .",
+    "start": "electron .",
+    "build:mac": "electron-builder --mac --x64 --dir"
+  },
+  "build": {
+    "appId": "com.electron-timer.app",
+    "files": [
+      "dist",
+      "src"
+    ],
+    "directories": {
+      "output": "build",
+      "app": "."
+    },
+    "asar": true,
+    "publish": null
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^13.1.2",
+    "electron-builder": "^22.11.7"
+  }
+}
