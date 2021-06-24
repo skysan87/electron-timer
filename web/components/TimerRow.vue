@@ -49,13 +49,7 @@
 </template>
 
 <script>
-
-const toDigit = (val) => {
-  if (val === null || val === undefined) {
-    return ''
-  }
-  return val.toString().padStart(2, '0')
-}
+import { toDigit } from '@/util/common'
 
 export default {
   name: 'TimerRow',
@@ -103,7 +97,6 @@ export default {
         this.leftTime = this.timer.minutes * 60 + this.timer.seconds
       }
       if (this.leftTime === 0) {
-        console.log('timer is not started')
         return
       }
       this.isWorking = true
@@ -111,6 +104,7 @@ export default {
         this.leftTime -= 1 // sec
         if (this.leftTime <= 0) {
           this.stop()
+          this.notify()
         }
       }, 1000)
     },
@@ -125,6 +119,13 @@ export default {
       this.timer.minutes = 0
       this.timer.seconds = 0
       this.timer.title = ''
+    },
+    notify () {
+      this.$store.dispatch('Log/add', {
+        id: Date.now(),
+        title: this.timer.title,
+        total: this.timer.minutes * 60 + this.timer.seconds
+      })
     }
   }
 }
