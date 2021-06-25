@@ -3,10 +3,10 @@
     <div class="flex pb-1 items-center">
       <div class="flex-1">
         <div v-if="status === 'ZERO'">
-          <input v-model="timer.title" type="text" class="text-black px-1 w-full rounded">
+          <input v-model="setting.title" type="text" class="text-black px-1 w-full rounded">
         </div>
         <div v-else>
-          {{ timer.title }}
+          {{ setting.title }}
         </div>
       </div>
       <div class="pl-2">
@@ -14,13 +14,13 @@
           {{ leftTimeText }}
         </div>
         <div v-else>
-          <select v-model="timer.minutes" class="text-black rounded">
+          <select v-model="setting.minutes" class="text-black rounded">
             <option v-for="list in minutesList" :key="list.value" :value="list.value">
               {{ list.title }}
             </option>
           </select>
           <span>:</span>
-          <select v-model="timer.seconds" class="text-black rounded">
+          <select v-model="setting.seconds" class="text-black rounded">
             <option v-for="list in secondsList" :key="list.value" :value="list.value">
               {{ list.title }}
             </option>
@@ -54,77 +54,64 @@ import { toDigit } from '@/util/common'
 export default {
   name: 'TimerRow',
   data: () => ({
-    isWorking: false,
-    leftTime: 0, // sec,
     intervalId: null,
     minutesList: Array.from({ length: 100 }, (v, i) => { return { title: toDigit(i), value: i } }),
     secondsList: Array.from({ length: 60 }, (v, i) => { return { title: toDigit(i), value: i } }),
-    timer: { minutes: 0, seconds: 0, title: '' }
+    setting: { minutes: 0, seconds: 0, title: '' }
   }),
   computed: {
-    leftTimeText: {
-      get () {
-        const min = Math.floor(this.leftTime / 60)
-        const sec = this.leftTime % 60
-        return `${toDigit(min)}:${toDigit(sec)}`
-      }
+    leftTimeText () {
+      return this.$store.getters['Timer/leftTimeText']
     },
-    progress: {
-      get () {
-        const total = this.timer.minutes * 60 + this.timer.seconds
-        if (!total) {
-          return 0
-        } else {
-          return Math.floor((this.leftTime / total) * 100)
-        }
-      }
+    progress () {
+      return this.$store.getters['Timer/progress']
     },
-    status: {
-      get () {
-        if (this.isWorking && this.leftTime > 0) {
-          return 'WORKING'
-        } else if (!this.isWorking && this.leftTime > 0) {
-          return 'STOPPED'
-        } else {
-          return 'ZERO'
-        }
-      }
+    status () {
+      return this.$store.getters['Timer/status']
+    },
+    leftTime () {
+      return this.$store.getters['Timer/leftTime']
     }
   },
   methods: {
     start (restart = false) {
       if (!restart) {
-        this.leftTime = this.timer.minutes * 60 + this.timer.seconds
+        this.$store.dispatch('Timer/init', this.setting)
       }
+
       if (this.leftTime === 0) {
         return
       }
-      this.isWorking = true
+
+      this.$store.dispatch('Timer/start')
+
       this.intervalId = setInterval(() => {
-        this.leftTime -= 1 // sec
+        this.$store.dispatch('Timer/tick', -1)
+
         if (this.leftTime <= 0) {
           this.stop()
           this.notify()
         }
       }, 1000)
     },
+
     stop () {
-      this.isWorking = false
+      this.$store.dispatch('Timer/stop')
+
       clearInterval(this.intervalId)
       console.log('timer is stopped')
     },
+
     reset () {
-      this.stop()
-      this.leftTime = 0
-      this.timer.minutes = 0
-      this.timer.seconds = 0
-      this.timer.title = ''
+      this.setting = { minutes: 0, seconds: 0, title: '' }
+      this.$store.dispatch('Timer/init', this.setting)
     },
+
     notify () {
       this.$store.dispatch('Log/add', {
         id: Date.now(),
-        title: this.timer.title,
-        total: this.timer.minutes * 60 + this.timer.seconds
+        title: this.setting.title,
+        total: this.setting.minutes * 60 + this.setting.seconds
       })
     }
   }
