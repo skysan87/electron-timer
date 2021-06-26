@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Tray, ipcMain, screen } = require('electron')
+const { exec } = require('child_process')
 const path = require('path')
 
 let win = null
@@ -125,6 +126,18 @@ const updateTrayImage = (isWorking) => {
   }
 }
 
+/**
+ * 音声メッセージを再生
+ *   macOS: sayコマンドを実行
+ * @param {String} message 再生するメッセージ
+ */
+const notifyMessage = (message) => {
+  // NOTE: macOSのみ対応
+  if (isMacOS) {
+    exec(`say ${message}`)
+  }
+}
+
 // ============================================
 
 if (isMacOS) {
@@ -172,6 +185,7 @@ ipcMain.on('timer-start', (evt, leftTime_) => {
       clearInterval(timerId)
       updateTrayImage(false)
       tray.setTitle('')
+      notifyMessage('時間です')
     }
   }, 1000)
 })
