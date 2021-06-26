@@ -56,8 +56,8 @@ export const mutations = {
     state.isWorking = false
   },
 
-  update (state, diff) {
-    state.leftTime += diff
+  update (state, lefttime) {
+    state.leftTime = lefttime
   }
 }
 
@@ -74,7 +74,7 @@ export const actions = {
     commit('stop')
   },
 
-  tick ({ commit }, diff) {
-    commit('update', diff)
+  tick ({ commit }, lefttime) {
+    commit('update', lefttime)
   }
 }

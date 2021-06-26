@@ -86,7 +86,7 @@ export default {
       this.$store.dispatch('Timer/start')
 
       this.intervalId = setInterval(() => {
-        this.$store.dispatch('Timer/tick', -1)
+        this.$store.dispatch('Timer/tick', this.leftTime - 1)
 
         if (this.leftTime <= 0) {
           this.stop()
