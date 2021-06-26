@@ -140,14 +140,22 @@ const notifyMessage = (message) => {
 
 // ============================================
 
+// macOS: Dockに非表示
 if (isMacOS) {
   app.dock.hide()
 }
 
-app.on('ready', () => {
-  createTray()
-  createWindow()
-})
+// 二重起動禁止
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.whenReady().then(() => {
+    createTray()
+    createWindow()
+  })
+}
 
 app.on('window-all-closed', () => {
   app.quit()
