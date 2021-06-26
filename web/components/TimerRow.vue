@@ -50,6 +50,9 @@
 
 <script>
 import { toDigit } from '@/util/common'
+import { createTimerService } from '@/service'
+
+const service = createTimerService()
 
 export default {
   name: 'TimerRow',
@@ -73,6 +76,12 @@ export default {
       return this.$store.getters['Timer/leftTime']
     }
   },
+  mounted () {
+    addEventListener('tick', this.tick)
+  },
+  beforeDestroy () {
+    removeEventListener('tick', this.tick)
+  },
   methods: {
     start (restart = false) {
       if (!restart) {
@@ -84,22 +93,21 @@ export default {
       }
 
       this.$store.dispatch('Timer/start')
+      service.start()
+    },
 
-      this.intervalId = setInterval(() => {
-        this.$store.dispatch('Timer/tick', this.leftTime - 1)
+    tick () {
+      this.$store.dispatch('Timer/tick', this.leftTime - 1)
 
-        if (this.leftTime <= 0) {
-          this.stop()
-          this.notify()
-        }
-      }, 1000)
+      if (this.leftTime <= 0) {
+        this.stop()
+        this.notify()
+      }
     },
 
     stop () {
       this.$store.dispatch('Timer/stop')
-
-      clearInterval(this.intervalId)
-      console.log('timer is stopped')
+      service.stop()
     },
 
     reset () {
