@@ -42,3 +42,39 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+/**
+ * タイマーIPC通信
+ */
+let timerId = null
+let leftTime = 0
+
+/**
+ * タイマー開始
+ */
+ipcMain.on('timer-start', (evt, leftTime_) => {
+  leftTime = leftTime_
+
+  timerId = setInterval(() => {
+    leftTime--
+    win.webContents.send('timer-tick', leftTime)
+    if (leftTime <= 0) {
+      clearInterval(timerId)
+    }
+  }, 1000)
+})
+
+/**
+ * タイマー停止
+ */
+ ipcMain.on('timer-stop', () => {
+  clearInterval(timerId)
+  console.log('timer stop')
+})
+
+/**
+ * タイマー初期化
+ */
+ ipcMain.on('timer-reset', () => {
+  leftTime = 0
+})
