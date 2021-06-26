@@ -18,6 +18,7 @@ const devConfig = {
   },
 
   css: [
+    '@/assets/css/tailwind.css'
   ],
 
   plugins: [

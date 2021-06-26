@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "electron-timer",
   "version": "1.0.0",
   "description": "",
   "main": "src/main/main.js",
@@ -14,6 +14,9 @@
       "dist",
       "src"
     ],
+    "mac": {
+      "icon": "src/img/icon_s512_black.png"
+    },
     "directories": {
       "output": "build",
       "app": "."
