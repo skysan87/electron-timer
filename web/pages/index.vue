@@ -1,9 +1,13 @@
 <template>
   <div class="container mx-auto h-screen flex flex-col">
-    <timer-row class="my-1" />
+    <div class="ml-1 flex justify-center">
+      <button class="text-sm text-gray-500" @click="closeApp">Quit</button>
+    </div>
 
-    <div class="text-xl">Log</div>
-    <div class="flex-1 overflow-y-auto">
+    <timer-row />
+
+    <div class="ml-1 text-center">Log</div>
+    <div class="flex-1 mx-1 overflow-y-auto">
       <log v-for="log in logList" :key="log.id" :detail="log" />
     </div>
   </div>
@@ -20,6 +24,13 @@ export default {
   computed: {
     logList () {
       return this.$store.getters['Log/getlist']
+    }
+  },
+  methods: {
+    closeApp () {
+      if (confirm('終了しますか？')) {
+        window.close()
+      }
     }
   }
 }
