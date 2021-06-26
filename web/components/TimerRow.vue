@@ -93,13 +93,13 @@ export default {
       }
 
       this.$store.dispatch('Timer/start')
-      service.start()
+      service.start(this.leftTime)
     },
 
-    tick () {
-      this.$store.dispatch('Timer/tick', this.leftTime - 1)
+    tick (e) {
+      this.$store.dispatch('Timer/tick', e.detail.leftTime)
 
-      if (this.leftTime <= 0) {
+      if (e.detail.leftTime <= 0) {
         this.stop()
         this.notify()
       }
@@ -113,6 +113,7 @@ export default {
     reset () {
       this.setting = { minutes: 0, seconds: 0, title: '' }
       this.$store.dispatch('Timer/init', this.setting)
+      service.reset()
     },
 
     notify () {
