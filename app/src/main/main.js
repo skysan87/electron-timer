@@ -41,6 +41,9 @@ const createWindow = async () => {
     await win.loadFile(path.resolve(__dirname, '../../dist/index.html'))
   }
 
+  // デスクトップを移動しても表示
+  win.setVisibleOnAllWorkspaces(true)
+
   // Windowからフォーカスが外れたらWindowを隠す
   win.on('blur', () => {
     if (!win.webContents.isDevToolsOpened()) {
